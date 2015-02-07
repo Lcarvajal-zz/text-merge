@@ -7,5 +7,6 @@
     <string name="select_a_group">Select a Group To Text</string>
 
     <string name="send">send</string>
+    <string name="name">name</string>
 
 </resources>
