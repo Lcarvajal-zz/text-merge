@@ -52,6 +52,7 @@
         android:layout_below="@+id/text_message"
         android:textSize="27dp"
         android:background="#FFFFFF"
-        android:text="@string/send"/>
+        android:text="@string/send"
+        />
 
 </LinearLayout>
