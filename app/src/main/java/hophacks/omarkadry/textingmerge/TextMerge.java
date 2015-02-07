@@ -1,6 +1,7 @@
 package hophacks.omarkadry.textingmerge;
 
 import android.app.LoaderManager;
+import android.content.Context;
 import android.content.Loader;
 import android.database.Cursor;
 import android.provider.ContactsContract;
@@ -9,8 +10,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import static android.database.DatabaseUtils.dumpCursorToString;
 
@@ -37,8 +43,38 @@ public class TextMerge extends ActionBarActivity implements LoaderManager.Loader
                 new String[]{ContactsContract.Groups.TITLE}, new int[]{android.R.id.text1}, 0);
         groupSpinner = (Spinner) findViewById(R.id.phoneGroups);
         groupSpinner.setAdapter(mAdapter);
+
+        //suggest first name, last name drop down
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_dropdown_item_1line, FIELDS);
+        final AutoCompleteTextView textView = (AutoCompleteTextView)
+                findViewById(R.id.text_message);
+        textView.setAdapter(adapter);
+
+
+        //send button
+        Button sendButton = (Button)findViewById(R.id.sendButton);
+        sendButton.setOnClickListener(new View.OnClickListener()
+        {
+            public void onClick(View arg0)
+            {
+                String textMessage = textView.getText().toString();
+
+                Context context = getApplicationContext();
+                CharSequence text = textMessage;
+                int duration = Toast.LENGTH_SHORT;
+
+                Toast toast = Toast.makeText(context, text, duration);
+                toast.show();
+            }
+        });
     }
 
+    private static final String[] FIELDS = new String[]
+            //strings of suggested text
+            {
+                    "@first_name", "@last_name"
+            };
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
