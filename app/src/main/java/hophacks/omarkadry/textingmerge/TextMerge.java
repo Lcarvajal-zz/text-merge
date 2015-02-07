@@ -42,6 +42,7 @@ public class TextMerge extends Activity implements LoaderManager.LoaderCallbacks
         Button sendButton;
         Spinner groupSpinner;
 
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_text_merge);
 
@@ -175,7 +176,7 @@ public class TextMerge extends Activity implements LoaderManager.LoaderCallbacks
                 //Get list of contacts
                 contactList = getContacts(getGroupID());
 
-                for(int z = 0; z < 1; z++)
+                for(int z = 0; z < contactList.size(); z++)
                 {
                     String firstN = contactList.get(z).getFirstName();
                     String lastN = contactList.get(z).getLastName();
@@ -237,7 +238,7 @@ public class TextMerge extends Activity implements LoaderManager.LoaderCallbacks
 
                     //send the text to current contact
                     SmsManager smsText = SmsManager.getDefault();
-                    smsText.sendTextMessage("phone#", null, "message", null, null);
+                    smsText.sendTextMessage(phoneN, null, text_message, null, null);
 
                     for(int a = 0; a < textApart.size(); a++)
                     //display contents  after sending text FOR TESTING ONLY
