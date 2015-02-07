@@ -7,6 +7,8 @@ import android.widget.MultiAutoCompleteTextView;
 
 /**
  * Created by Lukas on 07-Feb-15.
+ * this class allows the drop down list to occur at any point in the text message box
+ * after a ' '.
  */
 //suggest first name, last name drop down
 public class SpaceTokenizer implements MultiAutoCompleteTextView.Tokenizer {
