@@ -21,6 +21,8 @@ public class TextMerge extends ActionBarActivity implements LoaderManager.Loader
     Spinner groupSpinner;
     SimpleCursorAdapter mAdapter;
 
+    //hello
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
