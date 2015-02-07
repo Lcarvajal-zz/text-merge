@@ -4,7 +4,14 @@
     </style>
 
     <style name="MyActionBarTheme" parent="@android:style/Widget.Holo.Light.ActionBar">
-        <item name="android:background">#fff</item>
+        <item name="android:background">#ff4609</item>
+        <item name="android:logo">@drawable/mtxtlogo</item>
+        <item name="android:titleTextStyle">@style/TitleTextStyle</item>
+    </style>
+
+    <style name="TitleTextStyle"
+        parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textColor">#00000000</item>
+
     </style>
 </resources>
-<!-- #ff4609 -->

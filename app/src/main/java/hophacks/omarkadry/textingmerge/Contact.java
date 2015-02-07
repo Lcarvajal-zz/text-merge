@@ -18,7 +18,7 @@ public class Contact {
             this.last_name = "";
         } else {
             this.first_name = tokens[0];
-            this.last_name = tokens[1].substring(1);    //remove space
+            this.last_name = tokens[1].substring(0);    //remove space
         }
 
         this.phoneNumber = phoneNumber;
