@@ -184,7 +184,7 @@ public class TextMerge extends ActionBarActivity implements LoaderManager.Loader
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_text_merge, menu);
+        //getMenuInflater().inflate(R.menu.menu_text_merge, menu);
         return true;
     }
 

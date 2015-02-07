@@ -14,7 +14,6 @@
         android:textSize="25dp"
         android:text="@string/prompt"
         android:id="@+id/textView"
-        android:gravity="center"
         android:background="@android:color/transparent"
         />
 
