@@ -13,12 +13,10 @@ public class Contact {
     //splits name into first and last name
     {
         String[] tokens = name.split(" ");
-        if(tokens.length != 2)
-        {
+        if (tokens.length != 2) {
             this.first_name = name;
             this.last_name = "";
-        }
-        else {
+        } else {
             this.first_name = tokens[0];
             this.last_name = tokens[1].substring(1);    //remove space
         }
@@ -26,17 +24,25 @@ public class Contact {
         this.phoneNumber = phoneNumber;
     }
 
-    public String getPhoneNumber(){
+    public String getPhoneNumber() {
         return phoneNumber;
     }
 
-    public String getFirstName(){
+    public String getFirstName() {
         return first_name;
     }
 
-    public String getLastName() { return last_name; }
+    public String getLastName() {
+        return last_name;
+    }
 
-    public String getFullName() {return first_name + " " + last_name;}
+    public String getFullName()
+    {
+        if (last_name.length() > 0)
+            return first_name + " " + last_name;
+        else
+            return first_name;
+    }
 
     public String toString(){
         return "Name: " + this.getFullName() + " Phone Number: " + phoneNumber;

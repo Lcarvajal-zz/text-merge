@@ -106,7 +106,7 @@ public class TextMerge extends ActionBarActivity implements LoaderManager.Loader
     private static final String[] FIELDS = new String[]
             //strings of suggested text
             {
-                    "@first name", "@last name", "@name"
+                    "@name", "@first name", "@last name"
             };
 
     public ArrayList<Contact> getContacts(int groupID){
