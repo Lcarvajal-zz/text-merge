@@ -109,8 +109,26 @@ public class TextMerge extends Activity implements LoaderManager.LoaderCallbacks
             {
                 ArrayList<Contact> contactList;
                 String message = textComplete.getText().toString();
+                String messageToSend;
+                Contact currentContact;
+
+                contactList = getContacts(getGroupID());
+
+                for(int i = 0; i < contactList.size(); i++){
+                    currentContact = contactList.get(i);
+                    messageToSend = message.replace("@first_name", currentContact.getFirstName());
+                    messageToSend = messageToSend.replace("@name", currentContact.getFullName());
+                    messageToSend = messageToSend.replace("@last_name", currentContact.getLastName());
+
+                    //Send the text to the Current Contact
+                    SmsManager smsText = SmsManager.getDefault();
+                    smsText.sendTextMessage(currentContact.getPhoneNumber(), null,
+                            messageToSend, null, null);
+                    Log.i(DEBUG, "Text Message: '" + messageToSend + "' Sent to " + currentContact.getFullName());
+                }
 
                 //Break apart the string based on '@' escape characters
+                /*
                 List<String> textApart = new ArrayList<>();
                 Scanner scanM = new Scanner(message);
 
@@ -264,7 +282,7 @@ public class TextMerge extends Activity implements LoaderManager.LoaderCallbacks
                         toast.show();
                     }
                 }
-
+            */
             }   //END OF SEND BUTTON FUNCTION
         });
     }
