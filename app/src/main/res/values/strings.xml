@@ -8,5 +8,6 @@
 
     <string name="send">send</string>
     <string name="name">name</string>
+    <string name="prompt">select a group</string>
 
 </resources>

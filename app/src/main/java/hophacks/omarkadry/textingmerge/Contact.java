@@ -6,22 +6,45 @@ package hophacks.omarkadry.textingmerge;
  */
 public class Contact {
     private String phoneNumber;
-    private String name;
+    private String first_name;
+    private String last_name;
 
-    public Contact(String phoneNumber, String name){
+    public Contact(String phoneNumber, String name)
+    //splits name into first and last name
+    {
+        String[] tokens = name.split(" ");
+        if (tokens.length != 2) {
+            this.first_name = name;
+            this.last_name = "";
+        } else {
+            this.first_name = tokens[0];
+            this.last_name = tokens[1].substring(1);    //remove space
+        }
+
         this.phoneNumber = phoneNumber;
-        this.name = name;
     }
 
-    public String getPhoneNumber(){
+    public String getPhoneNumber() {
         return phoneNumber;
     }
 
-    public String name(){
-        return name;
+    public String getFirstName() {
+        return first_name;
+    }
+
+    public String getLastName() {
+        return last_name;
+    }
+
+    public String getFullName()
+    {
+        if (last_name.length() > 0)
+            return first_name + " " + last_name;
+        else
+            return first_name;
     }
 
     public String toString(){
-        return "Name: " + name + " Phone Number: " + phoneNumber;
+        return "Name: " + this.getFullName() + " Phone Number: " + phoneNumber;
     }
 }
