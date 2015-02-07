@@ -26,7 +26,7 @@ public class TextMerge extends ActionBarActivity implements LoaderManager.Loader
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_text_merge);
 
-        //Initialize the GroupListLoader
+        //Initialize the GroupListLoader 
         getLoaderManager().initLoader(0, null, this);
 
         //Set the Adapter for the Groups and send it to the group spinner
