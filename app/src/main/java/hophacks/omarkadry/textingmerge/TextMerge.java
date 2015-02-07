@@ -177,9 +177,10 @@ public class TextMerge extends Activity implements LoaderManager.LoaderCallbacks
 
                 for(int z = 0; z < 1; z++)
                 {
-                    String fn = "first";
-                    String lasn = "last";
-                    String nam = "name";
+                    String firstN = contactList.get(z).getFirstName();
+                    String lastN = contactList.get(z).getLastName();
+                    String fullN = contactList.get(z).getFullName();
+                    String phoneN = contactList.get(z).getPhoneNumber();
 
                     String text_message = new String();
 
@@ -187,13 +188,13 @@ public class TextMerge extends Activity implements LoaderManager.LoaderCallbacks
                     //insert all full names if needed
                     {
                         if(nameL[0] == 0) {
-                            textIndividual.set(0, nam);
+                            textIndividual.set(0, fullN);
                         }
 
                         for(int a = 0; a < 10; a++)
                         {
                             if(nameL[a] != 0)
-                                textIndividual.set(nameL[a], nam);
+                                textIndividual.set(nameL[a], fullN);
                         }
                     }
 
@@ -201,12 +202,12 @@ public class TextMerge extends Activity implements LoaderManager.LoaderCallbacks
                     //insert all first names if needed
                     {
                         if(fNameL[0] == 0)
-                            textIndividual.set(0, fn);
+                            textIndividual.set(0, firstN);
 
                         for(int a = 0; a < 10; a++)
                         {
                             if(fNameL[a] != 0)
-                                textIndividual.set(fNameL[a], fn);
+                                textIndividual.set(fNameL[a], firstN);
                         }
                     }
 
@@ -214,12 +215,12 @@ public class TextMerge extends Activity implements LoaderManager.LoaderCallbacks
                     //insert all last names if needed
                     {
                         if(lNameL[0] == 0)
-                            textIndividual.set(0, lasn);
+                            textIndividual.set(0, lastN);
 
                         for(int a = 0; a < 10; a++)
                         {
                             if(lNameL[a] != 0)
-                                textIndividual.set(lNameL[a], lasn);
+                                textIndividual.set(lNameL[a], lastN);
                         }
                     }
 
