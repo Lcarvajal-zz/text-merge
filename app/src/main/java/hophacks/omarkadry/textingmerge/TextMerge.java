@@ -1,24 +1,31 @@
 package hophacks.omarkadry.textingmerge;
 
 import android.app.LoaderManager;
+import android.content.Context;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.MultiAutoCompleteTextView;
+import android.widget.SimpleCursorAdapter;
+import android.widget.Spinner;
+import android.widget.Toast;
+import android.widget.SimpleAdapter;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
+
 import java.util.ArrayList;
+
+import static android.database.DatabaseUtils.dumpCursorToString;
 
 public class TextMerge extends ActionBarActivity implements LoaderManager.LoaderCallbacks<Cursor>{
 
@@ -27,8 +34,18 @@ public class TextMerge extends ActionBarActivity implements LoaderManager.Loader
     Spinner groupSpinner;
     SimpleCursorAdapter mAdapter;
 
+    private static final String[] FIELDS = new String[]
+        //strings of suggested text
+        {
+            "@first_name", "@last_name"
+        };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Button sendButton;
+        ArrayAdapter<String> adapter;
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_text_merge);
 
@@ -42,7 +59,7 @@ public class TextMerge extends ActionBarActivity implements LoaderManager.Loader
             android.R.layout.simple_list_item_2,
             null,
             new String[]{ContactsContract.Groups.TITLE, ContactsContract.Groups.ACCOUNT_NAME,
-                ContactsContract.Groups.ACCOUNT_TYPE},
+                ContactsContract.Groups.ACCOUNT_TYPE, ContactsContract.Groups._ID},
             new int[]{android.R.id.text1, android.R.id.text2},
             0);
 
@@ -54,26 +71,27 @@ public class TextMerge extends ActionBarActivity implements LoaderManager.Loader
 
         mAdapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
             public boolean setViewValue(View aView, Cursor aCursor, int aColumnIndex) {
-                if (aColumnIndex == GroupListLoader.ACCOUNT_NAME) {
+            if (aColumnIndex == GroupListLoader.ACCOUNT_NAME) {
 
-                    String acc_name = aCursor.getString(GroupListLoader.ACCOUNT_NAME);
-                    String acc_type = aCursor.getString(GroupListLoader.ACCOUNT_TYPE);
-                    TextView spinnerText;
+                String acc_name = aCursor.getString(GroupListLoader.ACCOUNT_NAME);
+                String acc_type = aCursor.getString(GroupListLoader.ACCOUNT_TYPE);
+                TextView spinnerText;
 
-                    //Not a Google Account
-                    if(!acc_type.equals("com.google")){
-                        //Change to "Saved on Phone"
-                        spinnerText = (TextView) aView;
-                        spinnerText.setText("Saved on Phone");
-                    }
-                    //Is a Google Account so display the E-mail
-                    else{
-                        spinnerText = (TextView) aView;
-                        spinnerText.setText(acc_name);
-                    }
-                    return true;
+                //Not a Google Account
+                if(!acc_type.equals("com.google")){
+                    //Change to "Saved on Phone"
+                    spinnerText = (TextView) aView;
+                    spinnerText.setText("Saved on Phone");
                 }
-                return false;
+                //Is a Google Account so display the E-mail
+                else{
+                    spinnerText = (TextView) aView;
+                    spinnerText.setText(acc_name);
+                }
+                return true;
+
+            }
+            return false;
             }
         });
 
@@ -81,35 +99,45 @@ public class TextMerge extends ActionBarActivity implements LoaderManager.Loader
         groupSpinner = (Spinner) findViewById(R.id.phoneGroups);
         groupSpinner.setAdapter(mAdapter);
 
-        final MultiAutoCompleteTextView textComplete = (MultiAutoCompleteTextView) this.findViewById(R.id.text_message);
-        ArrayAdapter<String> aaStr = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, FIELDS);
-        textComplete.setAdapter(aaStr);
-        textComplete.setTokenizer(new SpaceTokenizer());
+        //suggest first name, last name drop down
+        adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_dropdown_item_1line, FIELDS);
+        final AutoCompleteTextView textView = (AutoCompleteTextView)
+                findViewById(R.id.text_message);
+        textView.setAdapter(adapter);
 
-        //send button
-        Button sendButton = (Button)findViewById(R.id.sendButton);
+
+        //Send button listener
+        sendButton = (Button)findViewById(R.id.sendButton);
         sendButton.setOnClickListener(new View.OnClickListener()
         {
+            Toast toast;
             public void onClick(View arg0)
             {
-                //convert text view to string
-                String textMessage = textComplete.getText().toString();
+                String textMessage = textView.getText().toString();
 
-                //create array of name and phone numbers
+                Context context = getApplicationContext();
+                CharSequence text = textMessage;
+                int duration = Toast.LENGTH_SHORT;
 
-                SmsManager smsText = SmsManager.getDefault();
-                smsText.sendTextMessage("phone#", null, "SMS text", null, null);
+                toast = Toast.makeText(context, text, duration);
+                toast.show();
             }
         });
     }
 
-    private static final String[] FIELDS = new String[]
-            //strings of suggested text
-            {
-                    "@name", "@first name", "@last name"
-            };
+    //Based on the Selected Group will return the ID of that group.
+    //Use the loader because its already there???
+    //Could try using when the spinner has a selection store what's currently selected's ID.
+    //I assumed that getCursor will give us the currently selected item in the spinner
+    private int getGroupID(){
+       int groupID = Integer.parseInt(mAdapter.getCursor().getString(GroupListLoader.GROUP_ID));
+       Log.i(DEBUG, "Group ID is: " + groupID);
+       return groupID;
+    }
 
-    public ArrayList<Contact> getContacts(int groupID){
+    //Based on the GroupID returns an ArrayList of Contacts with their Display name and Phone Number
+    private ArrayList<Contact> getContacts(int groupID){
         ArrayList<Contact> contactList = new ArrayList<Contact>();
 
         //Query for all contacts_ids in that group
