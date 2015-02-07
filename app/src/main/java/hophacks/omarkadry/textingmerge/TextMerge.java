@@ -1,12 +1,12 @@
 package hophacks.omarkadry.textingmerge;
 
+import android.app.Activity;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.telephony.SmsManager;
 import android.util.Log;
@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class TextMerge extends ActionBarActivity implements LoaderManager.LoaderCallbacks<Cursor>{
+public class TextMerge extends Activity implements LoaderManager.LoaderCallbacks<Cursor>{
 
     public final String DEBUG = "!!!DEBUG!!!";
     SimpleCursorAdapter mAdapter;

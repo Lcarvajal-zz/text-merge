@@ -11,8 +11,7 @@
         android:label="@string/app_name"
         android:theme="@style/MyCustomTheme" >
         <activity
-            android:name=".TextMerge"
-            android:theme="@style/MyCustomTheme">
+            android:name=".TextMerge">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
