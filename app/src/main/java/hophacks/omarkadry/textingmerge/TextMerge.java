@@ -12,7 +12,8 @@ import android.view.MenuItem;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 
-//Test
+import static android.database.DatabaseUtils.dumpCursorToString;
+
 public class TextMerge extends ActionBarActivity implements LoaderManager.LoaderCallbacks<Cursor>{
 
     public final String DEBUG = "!!!DEBUG!!!";
@@ -25,12 +26,16 @@ public class TextMerge extends ActionBarActivity implements LoaderManager.Loader
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_text_merge);
 
-        groupSpinner = (Spinner) findViewById(R.id.phoneGroups);
+        //Initialize the GroupListLoader
+        getLoaderManager().initLoader(0, null, this);
 
-        String[] groups = new String[]{ContactsContract.Groups.TITLE};
-        int[] to = new int[] { R.id.phoneGroups };
-        mAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, null, groups, to, 0);
+        //Set the Adapter for the Groups and send it to the group spinner
         Log.i(DEBUG, "Attempting to set the Adapter");
+        groupSpinner = (Spinner) findViewById(R.id.phoneGroups);
+        mAdapter = new SimpleCursorAdapter(this,
+                android.R.layout.simple_list_item_1, null,
+                new String[]{ContactsContract.Groups.TITLE}, new int[]{android.R.id.text1}, 0);
+        groupSpinner = (Spinner) findViewById(R.id.phoneGroups);
         groupSpinner.setAdapter(mAdapter);
     }
 
@@ -60,21 +65,20 @@ public class TextMerge extends ActionBarActivity implements LoaderManager.Loader
     @Override
     //Creates the GroupListLoader and returns it
     public Loader onCreateLoader(int id, Bundle args) {
+        Log.i(DEBUG, "onCreateLoader called");
         return new GroupListLoader(this);
     }
 
     @Override
-    //Swaps the loader into an adapter so the user can see the groups and select one
+    //Swaps the loaded loader into an adapter so the user can see the groups and select one
     public void onLoadFinished(Loader loader, Cursor cursor) {
-        switch(loader.getId()){
-            case LOADER_ID:
-                mAdapter.swapCursor(cursor);
-                break;
-        }
+            Log.i(DEBUG, "onLoadFinished called");
+            mAdapter.swapCursor(cursor);
     }
 
     @Override
     public void onLoaderReset(Loader loader) {
-
+        Log.i(DEBUG, "onLoaderRest called");
+        mAdapter.swapCursor(null);
     }
 }
