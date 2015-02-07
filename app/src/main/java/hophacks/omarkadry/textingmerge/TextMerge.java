@@ -27,7 +27,7 @@ public class TextMerge extends ActionBarActivity implements LoaderManager.Loader
     private static final String[] FIELDS = new String[]
             //strings of suggested text
             {
-                    "@name", "@first name", "@last name"
+                    "@name", "@first name", "@last name", "none"
             };
 
     @Override
@@ -44,7 +44,6 @@ public class TextMerge extends ActionBarActivity implements LoaderManager.Loader
         getLoaderManager().initLoader(0, null, this);
 
         //Set the Adapter for the Groups and send it to the group spinner
-        Log.i(DEBUG, "Attempting to set the Adapter");
         mAdapter = new SimpleCursorAdapter(this,
                 android.R.layout.simple_list_item_2,
                 null,
@@ -103,7 +102,8 @@ public class TextMerge extends ActionBarActivity implements LoaderManager.Loader
             {
                 ArrayList<Contact> contactList;
                 String message = textComplete.getText().toString();
-                //convert text view to string
+
+                //Break apart the string based on '@' escape characters
 
                 //Get list of contacts
                 contactList = getContacts(getGroupID());
@@ -205,20 +205,17 @@ public class TextMerge extends ActionBarActivity implements LoaderManager.Loader
     @Override
     //Creates the GroupListLoader and returns it
     public Loader onCreateLoader(int id, Bundle args) {
-        Log.i(DEBUG, "onCreateLoader called");
         return new GroupListLoader(this);
     }
 
     @Override
     //Swaps the loaded loader into an adapter so the user can see the groups and select one
     public void onLoadFinished(Loader loader, Cursor cursor) {
-        Log.i(DEBUG, "onLoadFinished called");
         mAdapter.swapCursor(cursor);
     }
 
     @Override
     public void onLoaderReset(Loader loader) {
-        Log.i(DEBUG, "onLoaderRest called");
         mAdapter.swapCursor(null);
     }
 }
