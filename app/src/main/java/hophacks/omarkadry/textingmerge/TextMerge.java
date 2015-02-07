@@ -1,36 +1,24 @@
 package hophacks.omarkadry.textingmerge;
 
 import android.app.LoaderManager;
-import android.content.Context;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.TextUtils;
+import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
-import android.widget.Toast;
-import android.widget.SimpleAdapter;
-import android.widget.SimpleCursorAdapter;
-import android.widget.Spinner;
 import android.widget.TextView;
-import hophacks.omarkadry.textingmerge.SpaceTokenizer;
-
 import java.util.ArrayList;
-
-import static android.database.DatabaseUtils.dumpCursorToString;
 
 public class TextMerge extends ActionBarActivity implements LoaderManager.LoaderCallbacks<Cursor>{
 
@@ -104,14 +92,13 @@ public class TextMerge extends ActionBarActivity implements LoaderManager.Loader
         {
             public void onClick(View arg0)
             {
+                //convert text view to string
                 String textMessage = textComplete.getText().toString();
 
-                Context context = getApplicationContext();
-                CharSequence text = textMessage;
-                int duration = Toast.LENGTH_SHORT;
+                //create array of name and phone numbers
 
-                Toast toast = Toast.makeText(context, text, duration);
-                toast.show();
+                SmsManager smsText = SmsManager.getDefault();
+                smsText.sendTextMessage("phone#", null, "SMS text", null, null);
             }
         });
     }
@@ -119,7 +106,7 @@ public class TextMerge extends ActionBarActivity implements LoaderManager.Loader
     private static final String[] FIELDS = new String[]
             //strings of suggested text
             {
-                    "@first_name", "@last_name"
+                    "@first name", "@last name", "@name"
             };
 
     public ArrayList<Contact> getContacts(int groupID){
