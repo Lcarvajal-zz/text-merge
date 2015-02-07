@@ -27,7 +27,7 @@ public class TextMerge extends ActionBarActivity implements LoaderManager.Loader
     private static final String[] FIELDS = new String[]
             //strings of suggested text
             {
-                    "@name", "@first name", "@last name", "none"
+                    "@Full_Name", "@First_Name", "@Last_Name"
             };
 
     @Override
