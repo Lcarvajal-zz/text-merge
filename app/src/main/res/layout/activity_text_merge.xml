@@ -22,11 +22,12 @@
         android:layout_height="wrap_content"
         android:id="@+id/phoneGroups" />
 
-    <AutoCompleteTextView
+    <MultiAutoCompleteTextView
         android:id="@+id/text_message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Message..."
+        android:completionThreshold="1"
         android:layout_below="@+id/phoneGroups" />
 
     <Button

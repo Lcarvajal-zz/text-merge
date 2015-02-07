@@ -8,6 +8,9 @@ import android.net.Uri;
 import android.provider.ContactsContract;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,6 +18,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.MultiAutoCompleteTextView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -22,6 +26,7 @@ import android.widget.SimpleAdapter;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
+import hophacks.omarkadry.textingmerge.SpaceTokenizer;
 
 import java.util.ArrayList;
 
@@ -91,13 +96,10 @@ public class TextMerge extends ActionBarActivity implements LoaderManager.Loader
         groupSpinner = (Spinner) findViewById(R.id.phoneGroups);
         groupSpinner.setAdapter(mAdapter);
 
-        //suggest first name, last name drop down
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_dropdown_item_1line, FIELDS);
-        final AutoCompleteTextView textView = (AutoCompleteTextView)
-                findViewById(R.id.text_message);
-        textView.setAdapter(adapter);
-
+        final MultiAutoCompleteTextView textComplete = (MultiAutoCompleteTextView) this.findViewById(R.id.text_message);
+        ArrayAdapter<String> aaStr = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, FIELDS);
+        textComplete.setAdapter(aaStr);
+        textComplete.setTokenizer(new SpaceTokenizer());
 
         //send button
         Button sendButton = (Button)findViewById(R.id.sendButton);
@@ -105,7 +107,7 @@ public class TextMerge extends ActionBarActivity implements LoaderManager.Loader
         {
             public void onClick(View arg0)
             {
-                String textMessage = textView.getText().toString();
+                String textMessage = textComplete.getText().toString();
 
                 Context context = getApplicationContext();
                 CharSequence text = textMessage;
