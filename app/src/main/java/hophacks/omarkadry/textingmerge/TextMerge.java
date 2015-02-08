@@ -1,8 +1,10 @@
 package hophacks.omarkadry.textingmerge;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.LoaderManager;
-import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
@@ -34,14 +36,13 @@ public class TextMerge extends Activity implements LoaderManager.LoaderCallbacks
             {
                     "@name", "@first_name", "@last_name"
             };
+    MultiAutoCompleteTextView textComplete;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        final MultiAutoCompleteTextView textComplete;
         ArrayAdapter<String> aaStr;
         Button sendButton;
         Spinner groupSpinner;
-
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_text_merge);
@@ -63,7 +64,6 @@ public class TextMerge extends Activity implements LoaderManager.LoaderCallbacks
         //Account_name is not compared because I do not know if it varies between phones.
         //It is certain that the only non-google account type is the phone however, so it is used
         //to compare.
-
         mAdapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
             public boolean setViewValue(View aView, Cursor aCursor, int aColumnIndex) {
                 if (aColumnIndex == GroupListLoader.ACCOUNT_NAME) {
@@ -93,7 +93,6 @@ public class TextMerge extends Activity implements LoaderManager.LoaderCallbacks
         groupSpinner = (Spinner) findViewById(R.id.phoneGroups);
         groupSpinner.setAdapter(mAdapter);
 
-
         textComplete = (MultiAutoCompleteTextView) this.findViewById(R.id.text_message);
         aaStr = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, FIELDS);
         textComplete.setAdapter(aaStr);
@@ -107,184 +106,63 @@ public class TextMerge extends Activity implements LoaderManager.LoaderCallbacks
             public void onClick(View arg0)
             //SEND BUTTON FUNCTION
             {
-                ArrayList<Contact> contactList;
-                String message = textComplete.getText().toString();
-                String messageToSend;
-                Contact currentContact;
+                sendTextAndExit();
 
-                contactList = getContacts(getGroupID());
-
-                for(int i = 0; i < contactList.size(); i++){
-                    currentContact = contactList.get(i);
-                    messageToSend = message.replace("@first_name", currentContact.getFirstName());
-                    messageToSend = messageToSend.replace("@name", currentContact.getFullName());
-                    messageToSend = messageToSend.replace("@last_name", currentContact.getLastName());
-
-                    //Send the text to the Current Contact
-                    SmsManager smsText = SmsManager.getDefault();
-                    smsText.sendTextMessage(currentContact.getPhoneNumber(), null,
-                            messageToSend, null, null);
-                    Log.i(DEBUG, "Text Message: '" + messageToSend + "' Sent to " + currentContact.getFullName());
-                }
-
-                //Break apart the string based on '@' escape characters
-                /*
-                List<String> textApart = new ArrayList<>();
-                Scanner scanM = new Scanner(message);
-
-                //first name locations in text message
-                int [] fNameL = new int[10];
-                fNameL[0] = -1;
-                int i = 0;
-
-                //last name locations in text message
-                int [] lNameL = new int[10];
-                lNameL[0] = -1;
-                int j = 0;
-
-                //full name locations in text message
-                int [] nameL = new int[10];
-                nameL[0] = -1;
-                int k = 0;
-
-                //all '@' locations to reset to default
-                //1/3 fNameL, 1/3 lNameL, 1/3 nameL
-                int [] namesLo = new int[30];
-
-
-                while(scanM.hasNext())
-                //scan text for '@' names
-                {
-                    String word = scanM.next();
-                    if(word.equals("@first_name"))
-                    {
-                        textApart.add(word);
-                        fNameL[i] = textApart.size() - 1;
-                        namesLo[i] = textApart.size() - 1;
-                        i++;
-                    }
-                    else if(word.equals("@last_name"))
-                    {
-                        textApart.add(word);
-                        lNameL[j] = textApart.size() - 1;
-                        namesLo[j + 10] = textApart.size() - 1;
-                        j++;
-                    }
-                    else if(word.equals("@name"))
-                    {
-                        textApart.add(word);
-                        nameL[k] = textApart.size() - 1;
-                        namesLo[k + 20] = textApart.size() - 1;
-                        k++;
-                    }
-                    else
-                    {
-                        textApart.add(word);
-                    }
-                }
-
-                List<String> textIndividual = new ArrayList<>();
-
-                for(int a = 0; a < textApart.size(); a++)
-                //copy array so that only parts have to be replaced later
-                {
-                    textIndividual.add(textApart.get(a));
-                }
-
-                //Get list of contacts
-                contactList = getContacts(getGroupID());
-
-                for(int z = 0; z < contactList.size(); z++)
-                {
-                    String firstN = contactList.get(z).getFirstName();
-                    String lastN = contactList.get(z).getLastName();
-                    String fullN = contactList.get(z).getFullName();
-                    String phoneN = contactList.get(z).getPhoneNumber();
-
-                    String text_message = new String();
-
-                    if(nameL[0] != -1)
-                    //insert all full names if needed
-                    {
-                        if(nameL[0] == 0) {
-                            textIndividual.set(0, fullN);
-                        }
-
-                        for(int a = 0; a < 10; a++)
-                        {
-                            if(nameL[a] != 0)
-                                textIndividual.set(nameL[a], fullN);
-                        }
-                    }
-
-                    if(fNameL[0] != -1)
-                    //insert all first names if needed
-                    {
-                        if(fNameL[0] == 0)
-                            textIndividual.set(0, firstN);
-
-                        for(int a = 0; a < 10; a++)
-                        {
-                            if(fNameL[a] != 0)
-                                textIndividual.set(fNameL[a], firstN);
-                        }
-                    }
-
-                    if(lNameL[0] != -1)
-                    //insert all last names if needed
-                    {
-                        if(lNameL[0] == 0)
-                            textIndividual.set(0, lastN);
-
-                        for(int a = 0; a < 10; a++)
-                        {
-                            if(lNameL[a] != 0)
-                                textIndividual.set(lNameL[a], lastN);
-                        }
-                    }
-
-                    for(int b = 0; b < textIndividual.size(); b++)
-                    //display contents before sending text FOR TESTING ONLY
-                    {
-                        Context context = getApplicationContext();
-                        CharSequence text = textIndividual.get(b);
-                        int duration = Toast.LENGTH_SHORT;
-
-                        Toast toast = Toast.makeText(context, text, duration);
-                        toast.show();
-                    }
-
-                    //send the text to current contact
-                    SmsManager smsText = SmsManager.getDefault();
-                    smsText.sendTextMessage(phoneN, null, text_message, null, null);
-
-                    for(int a = 0; a < textApart.size(); a++)
-                    //display contents  after sending text FOR TESTING ONLY
-                    {
-                        if(namesLo[a] > 0)
-                        {
-                            if(a < 10)
-                                textIndividual.set(namesLo[a], "@first_name");
-                            else if (a < 20)
-                                textIndividual.set(namesLo[a], "@last_name");
-                            else
-                                textIndividual.set(namesLo[a], "@name");
-
-                        }
-                    }
-
-                    for(int b = 0; b < textIndividual.size(); b++) {
-                        Context context = getApplicationContext();
-                        CharSequence text = "a" + textIndividual.get(b);
-                        int duration = Toast.LENGTH_SHORT;
-
-                        Toast toast = Toast.makeText(context, text, duration);
-                        toast.show();
-                    }
-                }
-            */
             }   //END OF SEND BUTTON FUNCTION
         });
+    }
+
+    private void sendTextAndExit() {
+        ArrayList<Contact> contactList;
+        String message = textComplete.getText().toString();
+
+        //If the message is blank display an alert
+        if(message.length() == 0){
+            new AlertDialog.Builder(TextMerge.this).
+                    setMessage("You cannot send an empty text message!").
+                    setNeutralButton("Close", null).
+                    show();
+            return;
+        }
+        String messageToSend;
+        Contact currentContact;
+
+        contactList = getContacts(getGroupID());
+        //If the group is empty display an alert
+        if(contactList == null){
+            new AlertDialog.Builder(TextMerge.this).
+                    setMessage("This Group has no Contacts!").
+                    setNeutralButton("Close", null).
+                    show();
+            return;
+        }
+
+        //Go through all the contacts and send the text
+        for(int i = 0; i < contactList.size(); i++){
+            currentContact = contactList.get(i);
+            messageToSend = message.replace("@first_name", currentContact.getFirstName());
+            messageToSend = messageToSend.replace("@name", currentContact.getFullName());
+            messageToSend = messageToSend.replace("@last_name", currentContact.getLastName());
+
+            //Send the text to the Current Contact
+            SmsManager smsText = SmsManager.getDefault();
+            smsText.sendTextMessage(currentContact.getPhoneNumber(), null,
+                    messageToSend, null, null);
+            Log.i(DEBUG, "Text Message: '" + messageToSend + "' Sent to " + currentContact.getFullName());
+        }
+
+        new AlertDialog.Builder(TextMerge.this).
+                setMessage("All Messages Have Been Sent Successfully").
+                setNeutralButton("Close", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent(Intent.ACTION_MAIN);
+                        intent.addCategory(Intent.CATEGORY_HOME);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                    }
+                }).
+                show();
     }
 
     //Based on the Selected Group will return the ID of that group.
@@ -349,7 +227,7 @@ public class TextMerge extends Activity implements LoaderManager.LoaderCallbacks
             }
             pCur.close();
         }
-
+        if(contactList.size() == 0){ return null;}
         return contactList;
     }
 
