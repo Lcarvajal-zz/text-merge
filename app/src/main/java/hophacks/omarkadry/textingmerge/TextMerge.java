@@ -7,10 +7,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.provider.ContactsContract;
 import android.os.Bundle;
 import android.telephony.SmsManager;
+import android.text.Layout;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -37,15 +39,18 @@ public class TextMerge extends Activity implements LoaderManager.LoaderCallbacks
                     "@name", "@first_name", "@last_name"
             };
     MultiAutoCompleteTextView textComplete;
+    Typeface doris_font;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         ArrayAdapter<String> aaStr;
         Button sendButton;
         Spinner groupSpinner;
+        doris_font = Typeface.createFromAsset(getAssets(), "dosis-semibold.ttf");
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_text_merge);
+
 
         //Initialize the GroupListLoader
         getLoaderManager().initLoader(0, null, this);
@@ -66,22 +71,31 @@ public class TextMerge extends Activity implements LoaderManager.LoaderCallbacks
         //to compare.
         mAdapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
             public boolean setViewValue(View aView, Cursor aCursor, int aColumnIndex) {
+                TextView spinnerText;
+
+                //Change the Font of the titles
+                if(aColumnIndex == GroupListLoader.TITLE){
+                    spinnerText = (TextView) aView;
+                    spinnerText.setTypeface(doris_font);
+                }
+
                 if (aColumnIndex == GroupListLoader.ACCOUNT_NAME) {
 
                     String acc_name = aCursor.getString(GroupListLoader.ACCOUNT_NAME);
                     String acc_type = aCursor.getString(GroupListLoader.ACCOUNT_TYPE);
-                    TextView spinnerText;
 
                     //Not a Google Account
                     if(!acc_type.equals("com.google")){
                         //Change to "Saved on Phone"
                         spinnerText = (TextView) aView;
                         spinnerText.setText("Saved on Phone");
+                        spinnerText.setTypeface(doris_font);
                     }
                     //Is a Google Account so display the E-mail
                     else{
                         spinnerText = (TextView) aView;
                         spinnerText.setText(acc_name);
+                        spinnerText.setTypeface(doris_font);
                     }
                     return true;
                 }
@@ -93,10 +107,13 @@ public class TextMerge extends Activity implements LoaderManager.LoaderCallbacks
         groupSpinner = (Spinner) findViewById(R.id.phoneGroups);
         groupSpinner.setAdapter(mAdapter);
 
+        //Set up Auto Complete
         textComplete = (MultiAutoCompleteTextView) this.findViewById(R.id.text_message);
+        textComplete.setTypeface(doris_font);
         aaStr = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, FIELDS);
         textComplete.setAdapter(aaStr);
         textComplete.setTokenizer(new SpaceTokenizer());
+
 
         //Send button
         //OnClick send button
@@ -107,8 +124,7 @@ public class TextMerge extends Activity implements LoaderManager.LoaderCallbacks
             //SEND BUTTON FUNCTION
             {
                 sendTextAndExit();
-
-            }   //END OF SEND BUTTON FUNCTION
+            }
         });
     }
 
