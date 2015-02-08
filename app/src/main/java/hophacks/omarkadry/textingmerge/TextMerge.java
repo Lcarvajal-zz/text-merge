@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.media.Image;
 import android.net.Uri;
@@ -78,6 +79,7 @@ public class TextMerge extends Activity implements LoaderManager.LoaderCallbacks
                 if(aColumnIndex == GroupListLoader.TITLE){
                     spinnerText = (TextView) aView;
                     spinnerText.setTypeface(doris_font);
+                    spinnerText.setTextColor(Color.WHITE);
                 }
 
                 if (aColumnIndex == GroupListLoader.ACCOUNT_NAME) {
@@ -91,12 +93,14 @@ public class TextMerge extends Activity implements LoaderManager.LoaderCallbacks
                         spinnerText = (TextView) aView;
                         spinnerText.setText("Saved on Phone");
                         spinnerText.setTypeface(doris_font);
+                        spinnerText.setTextColor(Color.WHITE);
                     }
                     //Is a Google Account so display the E-mail
                     else{
                         spinnerText = (TextView) aView;
                         spinnerText.setText(acc_name);
                         spinnerText.setTypeface(doris_font);
+                        spinnerText.setTextColor(Color.WHITE);
                     }
                     return true;
                 }
@@ -136,10 +140,8 @@ public class TextMerge extends Activity implements LoaderManager.LoaderCallbacks
 
         //If the message is blank display an alert
         if(message.length() == 0){
-            new AlertDialog.Builder(TextMerge.this).
-                    setMessage("You cannot send an empty text message!").
-                    setNeutralButton("Close", null).
-                    show();
+            mtxtAlert alert=new mtxtAlert(this, "You cannot send an empty text message!");
+            alert.show();
             return;
         }
         String messageToSend;
@@ -148,10 +150,8 @@ public class TextMerge extends Activity implements LoaderManager.LoaderCallbacks
         contactList = getContacts(getGroupID());
         //If the group is empty display an alert
         if(contactList == null){
-            new AlertDialog.Builder(TextMerge.this).
-                    setMessage("This Group has no Contacts!").
-                    setNeutralButton("Close", null).
-                    show();
+            mtxtAlert alert=new mtxtAlert(this, "This group has no Contacts!");
+            alert.show();
             return;
         }
 
@@ -169,18 +169,13 @@ public class TextMerge extends Activity implements LoaderManager.LoaderCallbacks
             Log.i(DEBUG, "Text Message: '" + messageToSend + "' Sent to " + currentContact.getFullName());
         }
 
-        new AlertDialog.Builder(TextMerge.this).
-                setMessage("All Messages Have Been Sent Successfully").
-                setNeutralButton("Close", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent intent = new Intent(Intent.ACTION_MAIN);
-                        intent.addCategory(Intent.CATEGORY_HOME);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-                    }
-                }).
-                show();
+        mtxtAlert alert=new mtxtAlert(this, "You cannot send an empty text message!");
+        alert.show();
+
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
     //Based on the Selected Group will return the ID of that group.
@@ -245,7 +240,7 @@ public class TextMerge extends Activity implements LoaderManager.LoaderCallbacks
             }
             pCur.close();
         }
-        if(contactList.size() == 0){ return null;}
+        if(contactList.size() == 0){return null;}
         return contactList;
     }
 

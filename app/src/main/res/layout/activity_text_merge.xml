@@ -15,11 +15,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="10dp"
-        android:background="#FFFFFF"
+        android:background="@drawable/back"
+        android:popupBackground="@drawable/back"
         android:layout_below="@+id/select_group_prompt"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
-
+    <!-- android:background="#000000" -->
     <MultiAutoCompleteTextView
         android:id="@+id/text_message"
         android:layout_width="wrap_content"
@@ -27,11 +28,10 @@
         android:paddingBottom="9dp"
         android:paddingTop="3dp"
         android:paddingRight="8dp"
-        android:paddingLeft="0dp"
+        android:paddingLeft="2dp"
         android:completionThreshold="1"
         android:gravity="top"
-
-        android:background="#000000"
+        android:background="@drawable/back"
         android:textSize="18dp"
         android:textCursorDrawable="@null"
         android:textColor="#FFFFFF"
@@ -57,12 +57,13 @@
         android:textSize="27dp"
         android:layout_alignTop="@+id/text_message"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:layout_alignBottom="@+id/text_message" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/select_group_prompt"
         android:id="@+id/select_group_prompt"
         android:textColor="#fff"
@@ -72,7 +73,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/message_prompt"
         android:textColor="#FFFFFF"
         android:id="@+id/enter_message_prompt"
