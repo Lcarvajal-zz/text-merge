@@ -26,26 +26,31 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import java.util.ArrayList;
 
+/**
+ * Created by Omar Kadry on 2/6/2015.
+ * Main Activity for M-txt. This allows the users to select a group from their phone contact and
+ * send a text message to each member as individual threads. It also allows them to user '@name',
+ * '@first_name' and '@last_name' to personalize each message with the respective name.
+ */
 public class TextMerge extends Activity implements LoaderManager.LoaderCallbacks<Cursor>{
 
     public final String DEBUG = "!!!DEBUG!!!";
-    SimpleCursorAdapter mAdapter;
+    private SimpleCursorAdapter mAdapter;
     private static final String[] FIELDS = new String[]
             //Strings of suggested text
             {
                     "@name", "@first_name", "@last_name"
             };
-    MultiAutoCompleteTextView textComplete;
-    Typeface doris_font;
+    private MultiAutoCompleteTextView textComplete;
+    private Typeface doris_font;
+    private TextView messageLen;
+    private Spinner groupSpinner;
+    private ImageButton sendButton;
+    private TextView groupSelect;
+    private TextView enterMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        ArrayAdapter<String> aaStr;
-        ImageButton sendButton;
-        Spinner groupSpinner;
-        TextView groupSelect;
-        TextView enterMessage;
-        final TextView messageLen;
         doris_font = Typeface.createFromAsset(getAssets(), "dosis-semibold.ttf");
 
         super.onCreate(savedInstanceState);
@@ -59,6 +64,27 @@ public class TextMerge extends Activity implements LoaderManager.LoaderCallbacks
         enterMessage.setTypeface(doris_font);
         messageLen.setTypeface(doris_font);
 
+        //Loads the Loader, sets the Adapter and loads it into the group spinner
+        setUpGroupSpinner();
+
+        //Set up Auto Complete text field
+        setUpMessageComposition();
+
+        //Set up Send button
+        sendButton = (ImageButton)findViewById(R.id.sendButton);
+        sendButton.setOnClickListener(new View.OnClickListener()
+        {
+            public void onClick(View arg0)
+            {
+                sendTextAndExit();
+            }
+        });
+    }
+
+    //Initializes the GroupListLoader, loads it into the adapter for the spinner. Also goes through
+    //The groups and changes the font to Doris in addition to changing Account names that refer
+    //to the phone to "Saved on Phone" for clarity
+    private void setUpGroupSpinner() {
         //Initialize the GroupListLoader
         getLoaderManager().initLoader(0, null, this);
 
@@ -116,14 +142,21 @@ public class TextMerge extends Activity implements LoaderManager.LoaderCallbacks
         //Set the Spinner Adapter
         groupSpinner = (Spinner) findViewById(R.id.phoneGroups);
         groupSpinner.setAdapter(mAdapter);
+    }
 
-        //Set up Auto Complete text field
+    //Sets up edit text field up with auto-complete up.
+    //Also listens for changes to it to update the message_length TextView
+    private void setUpMessageComposition() {
+        ArrayAdapter<String> aaStr;
+
         textComplete = (MultiAutoCompleteTextView) this.findViewById(R.id.text_message);
         textComplete.setTypeface(doris_font);
         aaStr = new DorisArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line,
                 FIELDS, doris_font);
         textComplete.setAdapter(aaStr);
         textComplete.setTokenizer(new SpaceTokenizer());
+
+        //Set up a text watcher to update the length count
         textComplete.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -134,16 +167,6 @@ public class TextMerge extends Activity implements LoaderManager.LoaderCallbacks
             @Override
             public void afterTextChanged(Editable s) {
                 messageLen.setText("Message Length: "+s.length() +" Characters");
-            }
-        });
-
-        //Set up Send button
-        sendButton = (ImageButton)findViewById(R.id.sendButton);
-        sendButton.setOnClickListener(new View.OnClickListener()
-        {
-            public void onClick(View arg0)
-            {
-                sendTextAndExit();
             }
         });
     }
@@ -198,6 +221,7 @@ public class TextMerge extends Activity implements LoaderManager.LoaderCallbacks
                 Intent intent = new Intent(Intent.ACTION_MAIN);
                 intent.addCategory(Intent.CATEGORY_HOME);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                textComplete.setText("");
                 startActivity(intent);
             }
         });

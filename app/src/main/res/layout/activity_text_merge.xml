@@ -20,7 +20,7 @@
         android:layout_below="@+id/select_group_prompt"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
-    <!-- android:background="#000000" -->
+
     <MultiAutoCompleteTextView
         android:id="@+id/text_message"
         android:layout_width="wrap_content"
@@ -28,6 +28,7 @@
         android:paddingBottom="9dp"
         android:paddingTop="3dp"
         android:paddingRight="8dp"
+        android:popupBackground="@drawable/back"
         android:paddingLeft="2dp"
         android:completionThreshold="1"
         android:gravity="top"
