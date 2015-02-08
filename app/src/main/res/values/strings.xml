@@ -9,5 +9,6 @@
     <string name="sendM">M</string>
     <string name="name">name</string>
     <string name="prompt">select a group</string>
+    <string name="txt_prompt">\@name will hold receiver\'s name. Try it!</string>
 
 </resources>
