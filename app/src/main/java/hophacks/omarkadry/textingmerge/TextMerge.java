@@ -115,6 +115,8 @@ public class TextMerge extends Activity implements LoaderManager.LoaderCallbacks
     private void sendTextAndExit() {
         ArrayList<Contact> contactList;
         String message = textComplete.getText().toString();
+
+        //If the message is blank display an alert
         if(message.length() == 0){
             new AlertDialog.Builder(TextMerge.this).
                     setMessage("You cannot send an empty text message!").
@@ -126,7 +128,16 @@ public class TextMerge extends Activity implements LoaderManager.LoaderCallbacks
         Contact currentContact;
 
         contactList = getContacts(getGroupID());
+        //If the group is empty display an alert
+        if(contactList == null){
+            new AlertDialog.Builder(TextMerge.this).
+                    setMessage("This Group has no Contacts!").
+                    setNeutralButton("Close", null).
+                    show();
+            return;
+        }
 
+        //Go through all the contacts and send the text
         for(int i = 0; i < contactList.size(); i++){
             currentContact = contactList.get(i);
             messageToSend = message.replace("@first_name", currentContact.getFirstName());
@@ -216,7 +227,7 @@ public class TextMerge extends Activity implements LoaderManager.LoaderCallbacks
             }
             pCur.close();
         }
-
+        if(contactList.size() == 0){ return null;}
         return contactList;
     }
 
