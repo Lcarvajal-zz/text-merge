@@ -110,7 +110,8 @@ public class TextMerge extends Activity implements LoaderManager.LoaderCallbacks
         //Set up Auto Complete
         textComplete = (MultiAutoCompleteTextView) this.findViewById(R.id.text_message);
         textComplete.setTypeface(doris_font);
-        aaStr = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, FIELDS);
+        aaStr = new DorisArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line,
+                FIELDS, doris_font);
         textComplete.setAdapter(aaStr);
         textComplete.setTokenizer(new SpaceTokenizer());
 
