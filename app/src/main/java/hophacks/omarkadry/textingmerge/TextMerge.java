@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.media.Image;
 import android.net.Uri;
@@ -78,6 +79,7 @@ public class TextMerge extends Activity implements LoaderManager.LoaderCallbacks
                 if(aColumnIndex == GroupListLoader.TITLE){
                     spinnerText = (TextView) aView;
                     spinnerText.setTypeface(doris_font);
+                    spinnerText.setTextColor(Color.WHITE);
                 }
 
                 if (aColumnIndex == GroupListLoader.ACCOUNT_NAME) {
@@ -91,12 +93,14 @@ public class TextMerge extends Activity implements LoaderManager.LoaderCallbacks
                         spinnerText = (TextView) aView;
                         spinnerText.setText("Saved on Phone");
                         spinnerText.setTypeface(doris_font);
+                        spinnerText.setTextColor(Color.WHITE);
                     }
                     //Is a Google Account so display the E-mail
                     else{
                         spinnerText = (TextView) aView;
                         spinnerText.setText(acc_name);
                         spinnerText.setTypeface(doris_font);
+                        spinnerText.setTextColor(Color.WHITE);
                     }
                     return true;
                 }
