@@ -7,52 +7,47 @@
     android:orientation="vertical"
     android:theme="@android:style/Theme.NoTitleBar"
     android:background="#000000"
-    android:typeface="sans">
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="25dp"
-        android:text="@string/prompt"
-        android:id="@+id/textView"
-        android:background="@android:color/transparent"
-        />
+    android:typeface="sans"
+    >
 
     <Spinner
         android:id="@+id/phoneGroups"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="-5dp"
         android:padding="10dp"
-        android:background="#FFFFFF"/>
+        android:background="#FFFFFF"
+        android:layout_below="@+id/select_group_prompt"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
     <MultiAutoCompleteTextView
         android:id="@+id/text_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/phoneGroups"
         android:paddingBottom="9dp"
         android:paddingTop="3dp"
         android:paddingRight="8dp"
-        android:paddingLeft="14dp"
-        android:layout_alignParentLeft="true"
-        android:layout_marginRight="60dp"
+        android:paddingLeft="0dp"
         android:completionThreshold="1"
         android:gravity="top"
 
         android:background="#000000"
-        android:textSize="20dp"
+        android:textSize="18dp"
         android:textCursorDrawable="@null"
         android:textColor="#FFFFFF"
         android:textColorHint="#FFFFFF"
-        android:hint="@string/txt_prompt" />
+        android:hint="@string/txt_prompt"
+        android:layout_marginTop="45dp"
+        android:layout_below="@+id/phoneGroups"
+        android:layout_toLeftOf="@+id/sendButton"
+        android:singleLine="false"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
     <ImageButton
         android:id="@+id/sendButton"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:layout_below="@+id/phoneGroups"
 
         android:background="#ff4609"
         android:textColor="#FFFFFF"
@@ -60,7 +55,29 @@
         android:src="@drawable/ic_action_send"
 
         android:textSize="27dp"
+        android:layout_alignTop="@+id/text_message"
         android:layout_alignParentRight="true"
-        />
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="@string/select_group_prompt"
+        android:id="@+id/select_group_prompt"
+        android:textColor="#fff"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="@string/message_prompt"
+        android:textColor="#FFFFFF"
+        android:id="@+id/enter_message_prompt"
+        android:layout_above="@+id/sendButton"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>
