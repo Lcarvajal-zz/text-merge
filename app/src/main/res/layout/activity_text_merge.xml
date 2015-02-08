@@ -32,29 +32,31 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/phoneGroups"
         android:paddingBottom="9dp"
-        android:paddingTop="0dp"
+        android:paddingTop="3dp"
         android:paddingRight="8dp"
         android:paddingLeft="14dp"
         android:layout_alignParentLeft="true"
         android:layout_marginRight="60dp"
         android:completionThreshold="1"
+        android:gravity="top"
 
         android:background="#000000"
         android:textSize="27dp"
         android:textCursorDrawable="@null"
         android:textColor="#FFFFFF"
         android:textColorHint="#FFFFFF"
-        android:hint="\@name will hold receiver's name. Try it!" />
+        android:hint="@string/txt_prompt" />
 
-    <Button
+    <ImageButton
         android:id="@+id/sendButton"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_below="@+id/phoneGroups"
-        android:text="@string/sendM"
 
         android:background="#ff4609"
         android:textColor="#FFFFFF"
+
+        android:src="@drawable/ic_action_send"
 
         android:textSize="27dp"
         android:layout_alignParentRight="true"
