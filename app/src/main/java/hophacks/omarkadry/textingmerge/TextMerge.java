@@ -12,6 +12,8 @@ import android.net.Uri;
 import android.provider.ContactsContract;
 import android.os.Bundle;
 import android.telephony.SmsManager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -41,16 +43,21 @@ public class TextMerge extends Activity implements LoaderManager.LoaderCallbacks
         ArrayAdapter<String> aaStr;
         ImageButton sendButton;
         Spinner groupSpinner;
+        TextView groupSelect;
+        TextView enterMessage;
+        final TextView messageLen;
         doris_font = Typeface.createFromAsset(getAssets(), "dosis-semibold.ttf");
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_text_merge);
 
         //Set the Static Prompts to the doris font
-        TextView groupSelect = (TextView) findViewById(R.id.select_group_prompt);
-        TextView enterMessage = (TextView) findViewById(R.id.enter_message_prompt);
+        groupSelect = (TextView) findViewById(R.id.select_group_prompt);
+        enterMessage = (TextView) findViewById(R.id.enter_message_prompt);
+        messageLen = (TextView) findViewById(R.id.message_length);
         groupSelect.setTypeface(doris_font);
         enterMessage.setTypeface(doris_font);
+        messageLen.setTypeface(doris_font);
 
         //Initialize the GroupListLoader
         getLoaderManager().initLoader(0, null, this);
@@ -117,7 +124,18 @@ public class TextMerge extends Activity implements LoaderManager.LoaderCallbacks
                 FIELDS, doris_font);
         textComplete.setAdapter(aaStr);
         textComplete.setTokenizer(new SpaceTokenizer());
+        textComplete.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                messageLen.setText("Message Length: "+s.length() +" Characters");
+            }
+        });
 
         //Set up Send button
         sendButton = (ImageButton)findViewById(R.id.sendButton);
