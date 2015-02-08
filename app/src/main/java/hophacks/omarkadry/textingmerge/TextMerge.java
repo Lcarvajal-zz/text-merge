@@ -12,7 +12,6 @@ import android.net.Uri;
 import android.provider.ContactsContract;
 import android.os.Bundle;
 import android.telephony.SmsManager;
-import android.text.Layout;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,11 +22,7 @@ import android.widget.MultiAutoCompleteTextView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
 
 public class TextMerge extends Activity implements LoaderManager.LoaderCallbacks<Cursor>{
 
