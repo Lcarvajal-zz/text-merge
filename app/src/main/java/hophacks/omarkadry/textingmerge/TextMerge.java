@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.Typeface;
+import android.media.Image;
 import android.net.Uri;
 import android.provider.ContactsContract;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
@@ -39,13 +41,17 @@ public class TextMerge extends Activity implements LoaderManager.LoaderCallbacks
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         ArrayAdapter<String> aaStr;
-        Button sendButton;
+        ImageButton sendButton;
         Spinner groupSpinner;
         doris_font = Typeface.createFromAsset(getAssets(), "dosis-semibold.ttf");
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_text_merge);
 
+        TextView groupSelect = (TextView) findViewById(R.id.select_group_prompt);
+        TextView enterMessage = (TextView) findViewById(R.id.enter_message_prompt);
+        groupSelect.setTypeface(doris_font);
+        enterMessage.setTypeface(doris_font);
 
         //Initialize the GroupListLoader
         getLoaderManager().initLoader(0, null, this);
@@ -113,7 +119,7 @@ public class TextMerge extends Activity implements LoaderManager.LoaderCallbacks
 
         //Send button
         //OnClick send button
-        sendButton = (Button)findViewById(R.id.sendButton);
+        sendButton = (ImageButton)findViewById(R.id.sendButton);
         sendButton.setOnClickListener(new View.OnClickListener()
         {
             public void onClick(View arg0)

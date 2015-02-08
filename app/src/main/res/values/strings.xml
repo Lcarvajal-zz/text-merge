@@ -10,5 +10,7 @@
     <string name="name">name</string>
     <string name="prompt">select a group</string>
     <string name="txt_prompt">\@name will hold receiver\'s name. Try it!</string>
+    <string name="message_prompt">Enter Message to Send</string>
+    <string name="select_group_prompt">Select Group to Text</string>
 
 </resources>
