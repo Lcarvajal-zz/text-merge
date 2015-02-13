@@ -1,7 +1,6 @@
 package hophacks.omarkadry.textingmerge;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.LoaderManager;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -9,17 +8,17 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.media.Image;
 import android.net.Uri;
 import android.provider.ContactsContract;
 import android.os.Bundle;
 import android.telephony.SmsManager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.SimpleCursorAdapter;
@@ -27,33 +26,65 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import java.util.ArrayList;
 
+/**
+ * Created by Omar Kadry on 2/6/2015.
+ * Main Activity for M-txt. This allows the users to select a group from their phone contact and
+ * send a text message to each member as individual threads. It also allows them to user '@name',
+ * '@first_name' and '@last_name' to personalize each message with the respective name.
+ */
 public class TextMerge extends Activity implements LoaderManager.LoaderCallbacks<Cursor>{
 
     public final String DEBUG = "!!!DEBUG!!!";
-    SimpleCursorAdapter mAdapter;
+    private SimpleCursorAdapter mAdapter;
     private static final String[] FIELDS = new String[]
-            //strings of suggested text
+            //Strings of suggested text
             {
                     "@name", "@first_name", "@last_name"
             };
-    MultiAutoCompleteTextView textComplete;
-    Typeface doris_font;
+    private MultiAutoCompleteTextView textComplete;
+    private Typeface doris_font;
+    private TextView messageLen;
+    private Spinner groupSpinner;
+    private ImageButton sendButton;
+    private TextView groupSelect;
+    private TextView enterMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        ArrayAdapter<String> aaStr;
-        ImageButton sendButton;
-        Spinner groupSpinner;
         doris_font = Typeface.createFromAsset(getAssets(), "dosis-semibold.ttf");
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_text_merge);
 
-        TextView groupSelect = (TextView) findViewById(R.id.select_group_prompt);
-        TextView enterMessage = (TextView) findViewById(R.id.enter_message_prompt);
+        //Set the Static Prompts to the doris font
+        groupSelect = (TextView) findViewById(R.id.select_group_prompt);
+        enterMessage = (TextView) findViewById(R.id.enter_message_prompt);
+        messageLen = (TextView) findViewById(R.id.message_length);
         groupSelect.setTypeface(doris_font);
         enterMessage.setTypeface(doris_font);
+        messageLen.setTypeface(doris_font);
 
+        //Loads the Loader, sets the Adapter and loads it into the group spinner
+        setUpGroupSpinner();
+
+        //Set up Auto Complete text field
+        setUpMessageComposition();
+
+        //Set up Send button
+        sendButton = (ImageButton)findViewById(R.id.sendButton);
+        sendButton.setOnClickListener(new View.OnClickListener()
+        {
+            public void onClick(View arg0)
+            {
+                sendTextAndExit();
+            }
+        });
+    }
+
+    //Initializes the GroupListLoader, loads it into the adapter for the spinner. Also goes through
+    //The groups and changes the font to Doris in addition to changing Account names that refer
+    //to the phone to "Saved on Phone" for clarity
+    private void setUpGroupSpinner() {
         //Initialize the GroupListLoader
         getLoaderManager().initLoader(0, null, this);
 
@@ -70,12 +101,12 @@ public class TextMerge extends Activity implements LoaderManager.LoaderCallbacks
         //We will change the ACCOUNT_NAME to say "Saved on Phone"
         //Account_name is not compared because I do not know if it varies between phones.
         //It is certain that the only non-google account type is the phone however, so it is used
-        //to compare.
+        //to compare. Also sets all fonts to the doris font
         mAdapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
             public boolean setViewValue(View aView, Cursor aCursor, int aColumnIndex) {
                 TextView spinnerText;
 
-                //Change the Font of the titles
+                //Change the Font of the titles to doris font
                 if(aColumnIndex == GroupListLoader.TITLE){
                     spinnerText = (TextView) aView;
                     spinnerText.setTypeface(doris_font);
@@ -111,8 +142,13 @@ public class TextMerge extends Activity implements LoaderManager.LoaderCallbacks
         //Set the Spinner Adapter
         groupSpinner = (Spinner) findViewById(R.id.phoneGroups);
         groupSpinner.setAdapter(mAdapter);
+    }
 
-        //Set up Auto Complete
+    //Sets up edit text field up with auto-complete up.
+    //Also listens for changes to it to update the message_length TextView
+    private void setUpMessageComposition() {
+        ArrayAdapter<String> aaStr;
+
         textComplete = (MultiAutoCompleteTextView) this.findViewById(R.id.text_message);
         textComplete.setTypeface(doris_font);
         aaStr = new DorisArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line,
@@ -120,37 +156,45 @@ public class TextMerge extends Activity implements LoaderManager.LoaderCallbacks
         textComplete.setAdapter(aaStr);
         textComplete.setTokenizer(new SpaceTokenizer());
 
+        //Set up a text watcher to update the length count
+        textComplete.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
-        //Send button
-        //OnClick send button
-        sendButton = (ImageButton)findViewById(R.id.sendButton);
-        sendButton.setOnClickListener(new View.OnClickListener()
-        {
-            public void onClick(View arg0)
-            //SEND BUTTON FUNCTION
-            {
-                sendTextAndExit();
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                messageLen.setText("Message Length: "+s.length() +" Characters");
             }
         });
     }
 
+    //Called when the send button is pressed
+    //Queries for the selected groups contacts and replaces @name, @first_name, @last_name if
+    //necessary.
+    //If the contact group is empty a popup box will appear. If the text message is empty a popup
+    //box will appear. Upon success exits the Application after a success popup box appears.
     private void sendTextAndExit() {
         ArrayList<Contact> contactList;
         String message = textComplete.getText().toString();
+        String messageToSend;
+        Contact currentContact;
+        mtxtAlert alert;
 
-        //If the message is blank display an alert
+        //If the message is blank display an alert and break
         if(message.length() == 0){
-            mtxtAlert alert=new mtxtAlert(this, "You cannot send an empty text message!");
+            alert=new mtxtAlert(this, "You cannot send an empty text message!");
             alert.show();
             return;
         }
-        String messageToSend;
-        Contact currentContact;
 
         contactList = getContacts(getGroupID());
-        //If the group is empty display an alert
+
+        //If the group is empty display an alert and break
         if(contactList == null){
-            mtxtAlert alert=new mtxtAlert(this, "This group has no Contacts!");
+            alert=new mtxtAlert(this, "This group has no Contacts!");
             alert.show();
             return;
         }
@@ -169,13 +213,22 @@ public class TextMerge extends Activity implements LoaderManager.LoaderCallbacks
             Log.i(DEBUG, "Text Message: '" + messageToSend + "' Sent to " + currentContact.getFullName());
         }
 
-        mtxtAlert alert=new mtxtAlert(this, "You cannot send an empty text message!");
+        //Success Sending all of the contacts, give a success dialog and exit the program
+        alert=new mtxtAlert(this, "Text Message Sent Successfully!");
+        alert.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                Intent intent = new Intent(Intent.ACTION_MAIN);
+                intent.addCategory(Intent.CATEGORY_HOME);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                textComplete.setText("");
+                startActivity(intent);
+            }
+        });
         alert.show();
 
-        Intent intent = new Intent(Intent.ACTION_MAIN);
-        intent.addCategory(Intent.CATEGORY_HOME);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
+
+
     }
 
     //Based on the Selected Group will return the ID of that group.
@@ -189,7 +242,7 @@ public class TextMerge extends Activity implements LoaderManager.LoaderCallbacks
     }
 
     //Returns a list of all contacts (phone number, display name) based on group ID
-    public ArrayList<Contact> getContacts(int groupID){
+    private ArrayList<Contact> getContacts(int groupID){
         ArrayList<Contact> contactList = new ArrayList<Contact>();
 
         //Query for all contacts_ids in that group
@@ -240,6 +293,8 @@ public class TextMerge extends Activity implements LoaderManager.LoaderCallbacks
             }
             pCur.close();
         }
+
+        //If there are no contacts return null and break.
         if(contactList.size() == 0){return null;}
         return contactList;
     }
